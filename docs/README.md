@@ -1,4 +1,4 @@
-# BALLOT BUDDY - Secure Digital Voting Platform
+# Evote_System- Secure Digital Voting Platform
 
 <div align="center">
 
