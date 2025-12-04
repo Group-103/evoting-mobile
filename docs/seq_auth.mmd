@@ -1,0 +1,20 @@
+sequenceDiagram
+    participant V as Voter (Mobile)
+    participant A as API Gateway
+    participant S as Auth Service
+    participant D as Database
+    participant E as Email Service
+
+    V->>A: Request OTP (RegNo)
+    A->>S: Validate Voter
+    S->>D: Check Eligibility
+    D-->>S: Voter Eligible
+    S->>E: Send OTP
+    E-->>V: Email with OTP
+    
+    V->>A: Submit OTP
+    A->>S: Verify OTP
+    S->>D: Validate Hash
+    D-->>S: Valid
+    S->>D: Create Ballot Token
+    S-->>V: Return Ballot Token

@@ -1,0 +1,13 @@
+sequenceDiagram
+    participant V as Voter (Mobile)
+    participant A as API Gateway
+    participant VS as Vote Service
+    participant D as Database
+
+    V->>A: Submit Vote (Token, Selections)
+    A->>VS: Validate Token
+    VS->>D: Check Ballot Status
+    D-->>VS: Active
+    VS->>D: Record Votes (Transaction)
+    VS->>D: Mark Ballot Consumed
+    VS-->>V: Vote Success Confirmation

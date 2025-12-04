@@ -1,0 +1,35 @@
+graph TD
+    A[Voter Login Success] --> B[Main Tabs Navigator]
+    B --> C[Vote Tab - DashboardScreen]
+    B --> D[Results Tab - ResultsScreen]
+    
+    C --> E{Ballot Token Exists?}
+    E -->|No| F[Redirect to Login]
+    E -->|Yes| G[Fetch Positions & Ballot Status]
+    
+    G --> H{Ballot Status?}
+    H -->|Consumed| I[Show 'Already Voted' Badge]
+    H -->|Active| J[Display Positions List]
+    
+    J --> K[Select Position]
+    K --> L[CandidateProfileScreen]
+    L --> M[View Candidate Details:<br/>- Name<br/>- Program<br/>- Manifesto<br/>- Photo]
+    L --> N[Cast Vote Button]
+    N --> O{Confirm Vote?}
+    O -->|Yes| P[API: /api/vote]
+    O -->|No| L
+    P --> Q{Vote Success?}
+    Q -->|Yes| R[Show Success Alert]
+    Q -->|No| S[Show Error]
+    R --> C
+    
+    D --> T[View Live Results:<br/>- Charts<br/>- Vote Counts<br/>- Percentages]
+    T --> U[Pull to Refresh]
+    U --> T
+    
+    C --> V[Logout]
+    V --> W[WelcomeScreen]
+    
+    style C fill:#51cf66
+    style D fill:#4dabf7
+    style L fill:#ffd43b

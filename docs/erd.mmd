@@ -1,0 +1,53 @@
+erDiagram
+    User ||--o{ Candidate : "creates"
+    User ||--o{ User : "creates officers"
+    User ||--o{ PasswordReset : "requests"
+    
+    Position ||--o{ Candidate : "has"
+    Position ||--o{ Vote : "receives"
+    
+    Candidate ||--o{ Vote : "receives"
+    
+    EligibleVoter ||--o{ Verification : "requests"
+    EligibleVoter ||--o{ Ballot : "owns"
+    
+    Verification ||--|| Ballot : "generates"
+    
+    Ballot ||--o{ Vote : "contains"
+
+    User {
+        string id PK
+        string email
+        string role "ADMIN, OFFICER, CANDIDATE"
+        string status
+    }
+
+    Position {
+        string id PK
+        string name
+        datetime nominationOpens
+        datetime votingOpens
+    }
+
+    Candidate {
+        string id PK
+        string status "SUBMITTED, APPROVED, REJECTED"
+        string manifestoUrl
+    }
+
+    EligibleVoter {
+        string id PK
+        string regNo
+        string status
+    }
+
+    Ballot {
+        string id PK
+        string token
+        string status "ACTIVE, CONSUMED"
+    }
+
+    Vote {
+        string id PK
+        datetime castAt
+    }

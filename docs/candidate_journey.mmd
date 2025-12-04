@@ -1,0 +1,41 @@
+graph TD
+    A[Candidate Login] --> B[CandidateDashboardScreen]
+    
+    B --> C[View Nomination Status:<br/>- SUBMITTED<br/>- APPROVED<br/>- REJECTED]
+    B --> D[View Current Info:<br/>- Name<br/>- Email<br/>- Program<br/>- Manifesto Status]
+    
+    B --> E[Quick Actions Menu]
+    E --> F[Edit Profile]
+    E --> G[View Manifesto]
+    E --> H[View Results]
+    
+    F --> I[EditCandidateProfileScreen]
+    I --> J[Current Information Display]
+    I --> K[Update Profile Photo]
+    K --> L{Pick Photo Source}
+    L -->|Camera/Gallery| M[Select Image]
+    M --> N[Preview Image]
+    
+    I --> O[Update Manifesto PDF]
+    O --> P[Select PDF Document]
+    P --> Q{Validate PDF}
+    Q -->|Valid| R[Show Selected Badge]
+    
+    N --> S[Save Changes]
+    R --> S
+    S --> T[API: Upload Files]
+    T --> B
+    
+    G --> U[ManifestoViewerScreen]
+    U --> V[View PDF in WebView]
+    V --> W[Download / Share]
+    
+    H --> X[ResultsScreen]
+    X --> Y[View Election Results]
+    
+    B --> Z[Logout]
+    Z --> AA[WelcomeScreen]
+    
+    style B fill:#ffd43b
+    style I fill:#ff922b
+    style U fill:#748ffc

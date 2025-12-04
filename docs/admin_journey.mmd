@@ -1,0 +1,39 @@
+graph TD
+    A[Admin/Officer Login] --> B[AdminDashboardScreen]
+    
+    B --> C[Overview Stats:<br/>- Positions<br/>- Candidates<br/>- Voters<br/>- Votes Cast]
+    
+    B --> D[Management Menu]
+    D --> E[Manage Candidates]
+    D --> F[Manage Positions]
+    D --> G[Manage Voters]
+    D --> H[Live Results]
+    D --> I[Audit Log]
+    D --> J[Create Officer]
+    
+    E --> K[AdminCandidatesScreen]
+    K --> L[List Nominations]
+    L --> M[Approve/Reject Candidate]
+    L --> N[Create New Candidate]
+    
+    F --> O[AdminPositionsScreen]
+    O --> P[List Positions]
+    P --> Q[Create New Position]
+    
+    G --> R[AdminVotersScreen]
+    R --> S[Upload Voters CSV]
+    R --> T[View Voter List]
+    
+    H --> U[ResultsScreen]
+    
+    I --> V[AuditLogScreen]
+    V --> W[View System Logs]
+    
+    J --> X[AdminCreateOfficerScreen]
+    X --> Y[Create Returning Officer]
+    
+    B --> Z[Logout]
+    
+    style B fill:#4c6ef5
+    style K fill:#845ef7
+    style O fill:#20c997
