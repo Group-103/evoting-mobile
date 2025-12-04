@@ -38,7 +38,7 @@
 ### Key Highlights
 
 - ✅ **Secure Authentication**: JWT-based authentication with role-based access control
-- ✅ **OTP Verification**: SMS-based OTP verification for voter identity
+- ✅ **OTP Verification**: Email-based OTP verification for voter identity
 - ✅ **Secret Ballot System**: Anonymous voting with ballot tokens
 - ✅ **Real-time Analytics**: Comprehensive reporting and visualization
 - ✅ **Audit Trail**: Complete activity logging for transparency
@@ -108,8 +108,8 @@
   - Account deactivation support
 
 - **OTP Verification**
-  - SMS-based OTP for voter verification
-  - 5-minute expiration
+  - Email-based OTP for voter verification
+  - 10-minute expiration
   - Rate limiting protection
 
 ### 📊 Admin Features
