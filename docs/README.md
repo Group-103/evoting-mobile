@@ -2,8 +2,6 @@
 
 <div align="center">
 
-![BALLOT BUDDY Logo](frontend/public/ballot.svg)
-
 **A modern, secure, and transparent digital voting system designed for democratic elections**
 
 [![React](https://img.shields.io/badge/React-19.2.0-blue.svg)](https://reactjs.org/)
@@ -35,7 +33,7 @@
 
 ## 🎯 Project Overview
 
-**BALLOT BUDDY** is a comprehensive digital voting platform that enables secure, transparent, and efficient elections. The system supports three main user roles: **Administrators**, **Returning Officers**, and **Candidates**, along with a seamless voting experience for eligible voters.
+**Evote** is a comprehensive digital voting platform that enables secure, transparent, and efficient elections. The system supports three main user roles: **Administrators**, **Returning Officers**, and **Candidates**, along with a seamless voting experience for eligible voters.
 
 ### Key Highlights
 
