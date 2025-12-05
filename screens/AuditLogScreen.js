@@ -7,6 +7,10 @@ import {
     RefreshControl,
     ActivityIndicator,
     TouchableOpacity,
+    Modal,
+    TextInput,
+    FlatList,
+    Alert,
 } from 'react-native';
 import { useTheme } from '../contexts/ThemeContext';
 import api from '../services/api';
@@ -47,6 +51,30 @@ export default function AuditLogScreen() {
     const onRefresh = () => {
         setRefreshing(true);
         fetchAuditLogs();
+    };
+
+    const clearDateFilters = () => {
+        setStartDate(null);
+        setEndDate(null);
+    };
+
+    const openDetailsModal = (log) => {
+        setSelectedLog(log);
+        setShowDetailsModal(true);
+    };
+
+    const closeDetailsModal = () => {
+        setShowDetailsModal(false);
+        setSelectedLog(null);
+    };
+
+    const formatPayloadForDisplay = (payload) => {
+        if (!payload) return 'No payload data';
+        try {
+            return JSON.stringify(payload, null, 2);
+        } catch (error) {
+            return 'Invalid payload format';
+        }
     };
 
     // Ensure filteredLogs is always an array
@@ -100,6 +128,42 @@ export default function AuditLogScreen() {
             default: return '📝';
         }
     };
+
+    const renderTableHeader = () => (
+        <View style={styles.tableHeader}>
+            <Text style={[styles.tableHeaderText, styles.timestampColumn]}>Timestamp</Text>
+            <Text style={[styles.tableHeaderText, styles.actorColumn]}>Actor</Text>
+            <Text style={[styles.tableHeaderText, styles.actionColumn]}>Action</Text>
+            <Text style={[styles.tableHeaderText, styles.entityColumn]}>Entity</Text>
+            <Text style={[styles.tableHeaderText, styles.detailsColumn]}>Details</Text>
+        </View>
+    );
+
+    const renderTableRow = ({ item: log, index }) => (
+        <View style={[styles.tableRow, index % 2 === 0 && styles.tableRowEven]}>
+            <Text style={[styles.tableCell, styles.timestampColumn]}>
+                {formatDate(log.createdAt)}
+            </Text>
+            <View style={[styles.tableCell, styles.actorColumn]}>
+                <Text style={styles.actorIcon}>{getActorIcon(log.actorType)}</Text>
+                <Text style={styles.tableCellText}>
+                    {log.actorType?.toUpperCase() || 'SYSTEM'}
+                </Text>
+            </View>
+            <Text style={[styles.tableCell, styles.actionColumn, { color: getActionColor(log.action) }]}>
+                {log.action?.replace(/_/g, ' ')}
+            </Text>
+            <Text style={[styles.tableCell, styles.entityColumn]}>
+                {log.entity?.toUpperCase() || 'N/A'}
+            </Text>
+            <TouchableOpacity
+                style={[styles.tableCell, styles.detailsColumn]}
+                onPress={() => openDetailsModal(log)}
+            >
+                <Text style={styles.detailsButtonText}>View Details</Text>
+            </TouchableOpacity>
+        </View>
+    );
 
     const styles = StyleSheet.create({
         container: {
@@ -245,6 +309,7 @@ export default function AuditLogScreen() {
 
     return (
         <View style={styles.container}>
+            {/* Actor Type Filters */}
             <View style={styles.filterBar}>
                 {['ALL', 'ADMIN', 'OFFICER', 'CANDIDATE', 'VOTER'].map((filterType) => (
                     <TouchableOpacity
@@ -265,111 +330,93 @@ export default function AuditLogScreen() {
                 ))}
             </View>
 
+            {/* Date Range Filters */}
+            <View style={styles.dateFilterContainer}>
+                <View style={styles.dateFilterRow}>
+                    <Text style={styles.dateFilterLabel}>From:</Text>
+                    <TextInput
+                        style={styles.dateInput}
+                        placeholder="YYYY-MM-DD"
+                        placeholderTextColor={theme.colors.subtext}
+                        value={startDate}
+                        onChangeText={setStartDate}
+                    />
+                    <Text style={styles.dateFilterLabel}>To:</Text>
+                    <TextInput
+                        style={styles.dateInput}
+                        placeholder="YYYY-MM-DD"
+                        placeholderTextColor={theme.colors.subtext}
+                        value={endDate}
+                        onChangeText={setEndDate}
+                    />
+                    <TouchableOpacity style={styles.clearButton} onPress={clearDateFilters}>
+                        <Text style={styles.clearButtonText}>Clear</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+
+            {/* Stats Bar */}
             <View style={styles.statsBar}>
                 <Text style={styles.statsText}>
                     Showing {filteredLogs.length} of {auditLogs.length} audit entries
                 </Text>
             </View>
 
-            <ScrollView
-                contentContainerStyle={styles.content}
-                refreshControl={
-                    <RefreshControl
-                        refreshing={refreshing}
-                        onRefresh={onRefresh}
-                        tintColor={theme.colors.primary}
-                    />
-                }
-            >
-                {filteredLogs.length === 0 ? (
-                    <View style={styles.emptyState}>
-                        <Text style={styles.emptyIcon}>📊</Text>
-                        <Text style={styles.emptyText}>
-                            {filter === 'ALL'
-                                ? 'No audit logs yet'
-                                : `No ${filter.toLowerCase()} activities found`}
-                        </Text>
-                    </View>
-                ) : (
-                    filteredLogs.map((log, index) => (
-                        <View
-                            key={log.id || index}
-                            style={[
-                                styles.logCard,
-                                { borderLeftColor: getActionColor(log.action) }
-                            ]}
-                        >
-                            <View style={styles.logHeader}>
-                                <Text style={[styles.logAction, { color: getActionColor(log.action) }]}>
-                                    {log.action?.replace(/_/g, ' ')}
-                                </Text>
-                                <Text style={styles.logTime}>
-                                    {formatDate(log.createdAt)}
-                                </Text>
-                            </View>
-
-                            <View style={styles.logActor}>
-                                <Text style={styles.actorIcon}>
-                                    {getActorIcon(log.actorType)}
-                                </Text>
-                                <Text style={styles.actorText}>
-                                    {log.actorType?.toUpperCase() || 'SYSTEM'}
-                                    {log.actorId && ` (ID: ${log.actorId.slice(0, 8)}...)`}
-                                </Text>
-                            </View>
-
-                            {(log.entity || log.entityId || log.payload) && (
-                                <View style={styles.logDetails}>
-                                    {log.entity && (
-                                        <View style={styles.logDetailRow}>
-                                            <Text style={styles.logDetailLabel}>Entity:</Text>
-                                            <Text style={styles.logDetailValue}>
-                                                {log.entity.toUpperCase()}
-                                            </Text>
-                                        </View>
-                                    )}
-                                    {log.entityId && (
-                                        <View style={styles.logDetailRow}>
-                                            <Text style={styles.logDetailLabel}>ID:</Text>
-                                            <Text style={styles.logDetailValue}>
-                                                {log.entityId.slice(0, 12)}...
-                                            </Text>
-                                        </View>
-                                    )}
-                                    {log.payload && typeof log.payload === 'object' && (
-                                        <>
-                                            {log.payload.positionName && (
-                                                <View style={styles.logDetailRow}>
-                                                    <Text style={styles.logDetailLabel}>Position:</Text>
-                                                    <Text style={styles.logDetailValue}>
-                                                        {log.payload.positionName}
-                                                    </Text>
-                                                </View>
-                                            )}
-                                            {log.payload.candidateName && (
-                                                <View style={styles.logDetailRow}>
-                                                    <Text style={styles.logDetailLabel}>Candidate:</Text>
-                                                    <Text style={styles.logDetailValue}>
-                                                        {log.payload.candidateName}
-                                                    </Text>
-                                                </View>
-                                            )}
-                                            {log.payload.reason && (
-                                                <View style={styles.logDetailRow}>
-                                                    <Text style={styles.logDetailLabel}>Reason:</Text>
-                                                    <Text style={styles.logDetailValue}>
-                                                        {log.payload.reason}
-                                                    </Text>
-                                                </View>
-                                            )}
-                                        </>
-                                    )}
-                                </View>
-                            )}
+            {/* Table */}
+            <View style={styles.tableContainer}>
+                {renderTableHeader()}
+                <FlatList
+                    data={filteredLogs}
+                    renderItem={renderTableRow}
+                    keyExtractor={(item, index) => item.id || index.toString()}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={onRefresh}
+                            tintColor={theme.colors.primary}
+                        />
+                    }
+                    ListEmptyComponent={
+                        <View style={styles.emptyState}>
+                            <Text style={styles.emptyIcon}>📊</Text>
+                            <Text style={styles.emptyText}>
+                                {filter === 'ALL'
+                                    ? 'No audit logs yet'
+                                    : `No ${filter.toLowerCase()} activities found`}
+                            </Text>
                         </View>
-                    ))
-                )}
-            </ScrollView>
+                    }
+                />
+            </View>
+
+            {/* Details Modal */}
+            <Modal
+                visible={showDetailsModal}
+                transparent={true}
+                animationType="fade"
+                onRequestClose={closeDetailsModal}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContent}>
+                        <View style={styles.modalHeader}>
+                            <Text style={styles.modalTitle}>Audit Log Details</Text>
+                            <TouchableOpacity onPress={closeDetailsModal} style={styles.closeButton}>
+                                <Text style={styles.closeButtonText}>×</Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        {selectedLog && (
+                            <ScrollView showsVerticalScrollIndicator={true}>
+                                <View style={styles.payloadContainer}>
+                                    <Text style={styles.payloadText}>
+                                        {formatPayloadForDisplay(selectedLog)}
+                                    </Text>
+                                </View>
+                            </ScrollView>
+                        )}
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 }

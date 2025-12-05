@@ -250,6 +250,11 @@ function AppContent() {
             headerTintColor: theme.colors.text,
           }}
         />
+        <Stack.Screen
+          name="OfficerDashboard"
+          component={OfficerDashboardScreen}
+          options={{ headerShown: false }}
+        />
       </Stack.Navigator>
       <StatusBar style={isDark ? "light" : "dark"} />
     </NavigationContainer>

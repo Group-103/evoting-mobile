@@ -27,8 +27,10 @@ export default function LoginScreen({ navigation }) {
 
                 Alert.alert('Success', `Welcome back, ${user.name}!`);
 
-                if (user.role === 'ADMIN' || user.role === 'OFFICER') {
+                if (user.role === 'ADMIN') {
                     navigation.replace('AdminDashboard');
+                } else if (user.role === 'OFFICER') {
+                    navigation.replace('OfficerDashboard');
                 } else if (user.role === 'CANDIDATE') {
                     navigation.replace('CandidateDashboard');
                 } else {
