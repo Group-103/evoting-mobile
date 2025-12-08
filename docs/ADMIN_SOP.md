@@ -430,9 +430,9 @@ POST   /api/positions                     - Create position
 ```
 
 ### Emergency Contacts
-- **System Administrator**: [Add contact]
-- **Technical Support**: [Add contact]
-- **Database Admin**: [Add contact]
+- **System Administrator**: wjdaniel379@gmail.comw 
+- **Technical Support**: trizzydaniels352@gmail.com 
+- **Database Admin**: techwiz25rs@gmail.com 
 
 ---
 
@@ -466,5 +466,5 @@ POST   /api/positions                     - Create position
 ---
 
 **Document Version:** 1.0  
-**Last Updated:** December 2024  
+**Last Updated:** December 2025  
 **Maintained by:** E-Voting System Team
